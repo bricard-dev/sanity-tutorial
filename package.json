@@ -17,6 +17,7 @@
     "@sanity/image-url": "^1.2.0",
     "@sanity/locale-fr-fr": "^1.2.26",
     "@sanity/vision": "^4.18.0",
+    "dayjs": "^1.11.19",
     "next": "16.0.3",
     "next-sanity": "^11.6.8",
     "react": "19.2.0",
