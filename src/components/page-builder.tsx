@@ -91,9 +91,15 @@ export function PageBuilder({
                 <FAQs {...block} />
               </DragHandle>
             );
-          default:
+          default: {
             // This is a fallback for when we don't have a block type
-            return <div key={block._key}>Block not found: {block._type}</div>;
+            const unknownBlock = block as { _key: string; _type: string };
+            return (
+              <div key={unknownBlock._key}>
+                Block not found: {unknownBlock._type}
+              </div>
+            );
+          }
         }
       })}
     </main>
