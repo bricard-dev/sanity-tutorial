@@ -10,7 +10,7 @@ type HeroProps = Extract<
 
 export function Hero({ title, text, image }: HeroProps) {
   return (
-    <section className="isolate w-full aspect-[2/1] py-16 relative overflow-hidden">
+    <section className="isolate w-full aspect-2/1 py-16 relative overflow-hidden">
       <div className="relative flex flex-col justify-center items-center gap-8 h-full z-20">
         {title ? (
           <h1 className="text-2xl md:text-4xl lg:text-6xl font-semibold text-white text-pretty max-w-3xl">

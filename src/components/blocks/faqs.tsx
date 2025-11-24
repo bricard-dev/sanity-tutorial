@@ -19,7 +19,7 @@ export function FAQs({ _key, title, faqs }: FAQsProps) {
           {faqs.map((faq) => (
             <details
               key={faq._id}
-              className="group [&[open]]:bg-pink-50 transition-colors duration-100 px-4 border-t border-pink-200"
+              className="group [[open]]:bg-pink-50 transition-colors duration-100 px-4 border-t border-pink-200"
               name={_key}
             >
               <summary className="text-xl font-semibold text-slate-800 list-none cursor-pointer py-4 flex items-center justify-between">
