@@ -9,7 +9,9 @@ import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
+import { resolve } from '@/sanity/presentation/resolve';
 import { frFRLocale } from '@sanity/locale-fr-fr';
+import { presentationTool } from 'sanity/presentation';
 import { apiVersion, dataset, projectId } from './src/sanity/env';
 import { schema } from './src/sanity/schemaTypes';
 import { structure } from './src/sanity/structure';
@@ -26,5 +28,13 @@ export default defineConfig({
     // https://www.sanity.io/docs/the-vision-plugin
     visionTool({ defaultApiVersion: apiVersion }),
     frFRLocale(),
+    presentationTool({
+      resolve,
+      previewUrl: {
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+        },
+      },
+    }),
   ],
 });
