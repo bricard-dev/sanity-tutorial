@@ -53,7 +53,7 @@ export function RelatedPosts({
           {posts.map((post) => (
             <li
               key={post._key}
-              className="p-4 bg-blue-50 sm:w-1/3 flex-shrink-0"
+              className="p-4 bg-blue-50 sm:w-1/3 shrink-0"
               data-sanity={createDataAttribute({
                 ...createDataAttributeConfig,
                 id: documentId,
