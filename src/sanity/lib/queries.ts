@@ -76,3 +76,13 @@ export const HOME_PAGE_QUERY = defineQuery(`*[_id == "siteSettings"][0]{
     }      
   }
 }`);
+
+export const NAVIGATION_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
+  navigation[]{
+    _key,
+    label,
+    page->{
+      slug
+    }
+  }
+}`);

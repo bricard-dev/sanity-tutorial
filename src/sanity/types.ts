@@ -25,6 +25,17 @@ export type SiteSettings = {
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "page";
   };
+  navigation?: Array<{
+    label: string;
+    page: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "page";
+    };
+    _type: "navItem";
+    _key: string;
+  }>;
 };
 
 export type SplitImage = {
@@ -638,6 +649,17 @@ export type HOME_PAGE_QUERYResult = {
     };
   } | null;
 } | null;
+// Variable: NAVIGATION_QUERY
+// Query: *[_type == "siteSettings"][0]{  navigation[]{    _key,    label,    page->{      slug    }  }}
+export type NAVIGATION_QUERYResult = {
+  navigation: Array<{
+    _key: string;
+    label: string;
+    page: {
+      slug: Slug | null;
+    };
+  }> | null;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
@@ -648,5 +670,6 @@ declare module "@sanity/client" {
     "*[_type == \"post\" && slug.current == $slug][0]{\n  _id,\n  title,\n  body,\n  mainImage,\n  publishedAt,\n  \"categories\": coalesce(\n    categories[]->{\n      _id,\n      slug,\n      title\n    },\n    []\n  ),\n  author->{\n    name,\n    image\n  },\n  relatedPosts[]{\n    _key, // required for drag and drop\n    ...@->{_id, title, slug} // get fields from the referenced post\n  }\n}": POST_QUERYResult;
     "*[_type == \"page\" && slug.current == $slug][0]{\n  ...,\n  content[]{\n    ...,\n    _type == \"faqs\" => {\n      ...,\n      faqs[]->\n    }\n  }\n}": PAGE_QUERYResult;
     "*[_id == \"siteSettings\"][0]{\n  homePage->{\n    ...,\n    content[]{\n      ...,\n      _type == \"faqs\" => {\n        ...,\n        faqs[]->\n      }\n    }      \n  }\n}": HOME_PAGE_QUERYResult;
+    "*[_type == \"siteSettings\"][0]{\n  navigation[]{\n    _key,\n    label,\n    page->{\n      slug\n    }\n  }\n}": NAVIGATION_QUERYResult;
   }
 }

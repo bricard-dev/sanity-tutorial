@@ -1,6 +1,11 @@
+import { NAVIGATION_QUERYResult } from '@/sanity/types';
 import Link from 'next/link';
 
-export function Header() {
+type HeaderProps = {
+  navigation: NonNullable<NAVIGATION_QUERYResult>['navigation'];
+};
+
+export function Header({ navigation }: HeaderProps) {
   return (
     <div className="from-pink-50 to-white bg-linear-to-b p-6">
       <header className="bg-white/80 shadow-md flex items-center justify-between p-6 rounded-lg container mx-auto shadow-pink-50">
@@ -11,13 +16,17 @@ export function Header() {
           Layer Caker
         </Link>
         <ul className="flex items-center gap-4 font-semibold text-slate-700">
-          <li>
-            <Link
-              className="hover:text-pink-500 transition-colors"
-              href="/posts"
-            >
-              Posts
-            </Link>
+          {navigation?.map((item) => (
+            <li key={item._key}>
+              <Link
+                className="hover:text-pink-500 transition-colors"
+                href={`/${item.page?.slug?.current || ''}`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+          {/* <li>
           </li>
           <li>
             <Link
@@ -26,7 +35,7 @@ export function Header() {
             >
               Sanity Studio
             </Link>
-          </li>
+          </li> */}
         </ul>
       </header>
     </div>
