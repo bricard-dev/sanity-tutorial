@@ -1,4 +1,7 @@
+import { siteConfig } from '@/lib/site-config';
+import { urlFor } from '@/sanity/lib/image';
 import { NAVIGATION_QUERYResult } from '@/sanity/types';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   NavigationMenu,
@@ -9,14 +12,60 @@ import {
 } from './ui/navigation-menu';
 
 type HeaderProps = {
-  navigation: NonNullable<NAVIGATION_QUERYResult>['navigation'];
+  siteSettings: NAVIGATION_QUERYResult;
 };
 
-export function Header({ navigation }: HeaderProps) {
+export function Header({ siteSettings }: HeaderProps) {
+  const {
+    navigation,
+    headerDisplayType,
+    headerCustomTitle,
+    headerLogo,
+    title,
+  } = siteSettings || {};
+
+  // Détermine le contenu à afficher dans le header
+  const renderHeaderTitle = () => {
+    switch (headerDisplayType) {
+      case 'customTitle':
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {headerCustomTitle || title || siteConfig.title}
+          </span>
+        );
+      case 'logo':
+        if (headerLogo?.asset?.url) {
+          return (
+            <Image
+              src={urlFor(headerLogo).width(150).height(60).url()}
+              alt={headerLogo.alt || 'Logo'}
+              width={150}
+              height={60}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          );
+        }
+        // Fallback si le logo n'est pas disponible
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {title || siteConfig.title}
+          </span>
+        );
+      case 'siteTitle':
+      default:
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {title || siteConfig.title}
+          </span>
+        );
+    }
+  };
+
   return (
     <header className="h-16 flex justify-between items-center container mx-auto">
-      <Link className="md:text-xl font-bold tracking-tight" href="/">
-        Layer Caker
+      <Link href="/" className="flex items-center">
+        {renderHeaderTitle()}
       </Link>
       <NavigationMenu>
         <NavigationMenuList className="flex-wrap">

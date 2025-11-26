@@ -14,7 +14,7 @@ export default async function FrontendLayout({
 
   return (
     <section className="bg-white min-h-screen">
-      <Header navigation={data?.navigation ?? []} />
+      <Header siteSettings={data} />
       {children}
       <SanityLive />
       {(await draftMode()).isEnabled && (
