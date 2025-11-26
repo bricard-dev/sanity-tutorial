@@ -19,12 +19,56 @@ export type SiteSettings = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  title: string;
+  description: string;
   homePage?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "page";
   };
+  headerDisplayType: "siteTitle" | "customTitle" | "logo";
+  headerCustomTitle?: string;
+  headerLogo?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt: string;
+    _type: "image";
+  };
+  navigation?: Array<{
+    label: string;
+    page: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "page";
+    };
+    _type: "navItem";
+    _key: string;
+  }>;
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x: number;
+  y: number;
+  height: number;
+  width: number;
 };
 
 export type SplitImage = {
@@ -159,22 +203,6 @@ export type Page = {
     crop?: SanityImageCrop;
     _type: "image";
   };
-};
-
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x: number;
-  y: number;
-  height: number;
-  width: number;
 };
 
 export type Slug = {
@@ -375,7 +403,7 @@ export type Geopoint = {
   alt?: number;
 };
 
-export type AllSanitySchemaTypes = SiteSettings | SplitImage | Hero | Features | Faqs | Faq | BlockContent | PageBuilder | Page | SanityImageCrop | SanityImageHotspot | Slug | Post | Author | Category | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
+export type AllSanitySchemaTypes = SiteSettings | SanityImageCrop | SanityImageHotspot | SplitImage | Hero | Features | Faqs | Faq | BlockContent | PageBuilder | Page | Slug | Post | Author | Category | SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageMetadata | SanityFileAsset | SanityAssetSourceData | SanityImageAsset | Geopoint;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: POSTS_QUERY
@@ -638,6 +666,33 @@ export type HOME_PAGE_QUERYResult = {
     };
   } | null;
 } | null;
+// Variable: NAVIGATION_QUERY
+// Query: *[_type == "siteSettings"][0]{  title,  headerDisplayType,  headerCustomTitle,  headerLogo{    asset->{      _id,      url    },    alt  },  navigation[]{    _key,    label,    page->{      slug    }  }}
+export type NAVIGATION_QUERYResult = {
+  title: string;
+  headerDisplayType: "customTitle" | "logo" | "siteTitle";
+  headerCustomTitle: string | null;
+  headerLogo: {
+    asset: {
+      _id: string;
+      url: string | null;
+    } | null;
+    alt: string;
+  } | null;
+  navigation: Array<{
+    _key: string;
+    label: string;
+    page: {
+      slug: Slug | null;
+    };
+  }> | null;
+} | null;
+// Variable: SITE_METADATA_QUERY
+// Query: *[_type == "siteSettings"][0]{  title,  description}
+export type SITE_METADATA_QUERYResult = {
+  title: string;
+  description: string;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
@@ -648,5 +703,7 @@ declare module "@sanity/client" {
     "*[_type == \"post\" && slug.current == $slug][0]{\n  _id,\n  title,\n  body,\n  mainImage,\n  publishedAt,\n  \"categories\": coalesce(\n    categories[]->{\n      _id,\n      slug,\n      title\n    },\n    []\n  ),\n  author->{\n    name,\n    image\n  },\n  relatedPosts[]{\n    _key, // required for drag and drop\n    ...@->{_id, title, slug} // get fields from the referenced post\n  }\n}": POST_QUERYResult;
     "*[_type == \"page\" && slug.current == $slug][0]{\n  ...,\n  content[]{\n    ...,\n    _type == \"faqs\" => {\n      ...,\n      faqs[]->\n    }\n  }\n}": PAGE_QUERYResult;
     "*[_id == \"siteSettings\"][0]{\n  homePage->{\n    ...,\n    content[]{\n      ...,\n      _type == \"faqs\" => {\n        ...,\n        faqs[]->\n      }\n    }      \n  }\n}": HOME_PAGE_QUERYResult;
+    "*[_type == \"siteSettings\"][0]{\n  title,\n  headerDisplayType,\n  headerCustomTitle,\n  headerLogo{\n    asset->{\n      _id,\n      url\n    },\n    alt\n  },\n  navigation[]{\n    _key,\n    label,\n    page->{\n      slug\n    }\n  }\n}": NAVIGATION_QUERYResult;
+    "*[_type == \"siteSettings\"][0]{\n  title,\n  description\n}": SITE_METADATA_QUERYResult;
   }
 }

@@ -76,3 +76,28 @@ export const HOME_PAGE_QUERY = defineQuery(`*[_id == "siteSettings"][0]{
     }      
   }
 }`);
+
+export const NAVIGATION_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
+  title,
+  headerDisplayType,
+  headerCustomTitle,
+  headerLogo{
+    asset->{
+      _id,
+      url
+    },
+    alt
+  },
+  navigation[]{
+    _key,
+    label,
+    page->{
+      slug
+    }
+  }
+}`);
+
+export const SITE_METADATA_QUERY = defineQuery(`*[_type == "siteSettings"][0]{
+  title,
+  description
+}`);

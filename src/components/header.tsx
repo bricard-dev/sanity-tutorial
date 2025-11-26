@@ -1,34 +1,88 @@
+import { siteConfig } from '@/lib/site-config';
+import { urlFor } from '@/sanity/lib/image';
+import { NAVIGATION_QUERYResult } from '@/sanity/types';
+import Image from 'next/image';
 import Link from 'next/link';
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from './ui/navigation-menu';
 
-export function Header() {
+type HeaderProps = {
+  siteSettings: NAVIGATION_QUERYResult;
+};
+
+export function Header({ siteSettings }: HeaderProps) {
+  const {
+    navigation,
+    headerDisplayType,
+    headerCustomTitle,
+    headerLogo,
+    title,
+  } = siteSettings || {};
+
+  // Détermine le contenu à afficher dans le header
+  const renderHeaderTitle = () => {
+    switch (headerDisplayType) {
+      case 'customTitle':
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {headerCustomTitle || title || siteConfig.title}
+          </span>
+        );
+      case 'logo':
+        if (headerLogo?.asset?.url) {
+          return (
+            <Image
+              src={urlFor(headerLogo).width(150).height(60).url()}
+              alt={headerLogo.alt || 'Logo'}
+              width={150}
+              height={60}
+              className="h-10 w-auto object-contain"
+              priority
+            />
+          );
+        }
+        // Fallback si le logo n'est pas disponible
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {title || siteConfig.title}
+          </span>
+        );
+      case 'siteTitle':
+      default:
+        return (
+          <span className="md:text-xl font-bold tracking-tight">
+            {title || siteConfig.title}
+          </span>
+        );
+    }
+  };
+
   return (
-    <div className="from-pink-50 to-white bg-linear-to-b p-6">
-      <header className="bg-white/80 shadow-md flex items-center justify-between p-6 rounded-lg container mx-auto shadow-pink-50">
-        <Link
-          className="text-pink-700 md:text-xl font-bold tracking-tight"
-          href="/"
-        >
-          Layer Caker
-        </Link>
-        <ul className="flex items-center gap-4 font-semibold text-slate-700">
-          <li>
-            <Link
-              className="hover:text-pink-500 transition-colors"
-              href="/posts"
-            >
-              Posts
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="hover:text-pink-500 transition-colors"
-              href="/studio"
-            >
-              Sanity Studio
-            </Link>
-          </li>
-        </ul>
-      </header>
-    </div>
+    <header className="h-16 flex justify-between items-center container mx-auto">
+      <Link href="/" className="flex items-center">
+        {renderHeaderTitle()}
+      </Link>
+      <NavigationMenu>
+        <NavigationMenuList className="flex-wrap">
+          {navigation?.map((item) => (
+            <NavigationMenuItem key={item._key}>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
+                <Link href={`/${item.page?.slug?.current || ''}`}>
+                  {item.label}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
+        </NavigationMenuList>
+      </NavigationMenu>
+    </header>
   );
 }
