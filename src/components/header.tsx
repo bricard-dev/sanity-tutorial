@@ -1,5 +1,12 @@
 import { NAVIGATION_QUERYResult } from '@/sanity/types';
 import Link from 'next/link';
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from './ui/navigation-menu';
 
 type HeaderProps = {
   navigation: NonNullable<NAVIGATION_QUERYResult>['navigation'];
@@ -7,37 +14,26 @@ type HeaderProps = {
 
 export function Header({ navigation }: HeaderProps) {
   return (
-    <div className="from-pink-50 to-white bg-linear-to-b p-6">
-      <header className="bg-white/80 shadow-md flex items-center justify-between p-6 rounded-lg container mx-auto shadow-pink-50">
-        <Link
-          className="text-pink-700 md:text-xl font-bold tracking-tight"
-          href="/"
-        >
-          Layer Caker
-        </Link>
-        <ul className="flex items-center gap-4 font-semibold text-slate-700">
+    <header className="h-16 flex justify-between items-center container mx-auto">
+      <Link className="md:text-xl font-bold tracking-tight" href="/">
+        Layer Caker
+      </Link>
+      <NavigationMenu>
+        <NavigationMenuList className="flex-wrap">
           {navigation?.map((item) => (
-            <li key={item._key}>
-              <Link
-                className="hover:text-pink-500 transition-colors"
-                href={`/${item.page?.slug?.current || ''}`}
+            <NavigationMenuItem key={item._key}>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
               >
-                {item.label}
-              </Link>
-            </li>
+                <Link href={`/${item.page?.slug?.current || ''}`}>
+                  {item.label}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           ))}
-          {/* <li>
-          </li>
-          <li>
-            <Link
-              className="hover:text-pink-500 transition-colors"
-              href="/studio"
-            >
-              Sanity Studio
-            </Link>
-          </li> */}
-        </ul>
-      </header>
-    </div>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </header>
   );
 }
